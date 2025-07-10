@@ -6,7 +6,7 @@ int main()
 	/*Tipos aritmeticos basicos*/
 	int my_int = 5;			//Numeros inteiros
 	float my_float = 3.3;		//Numeros reais
-	double my_double = 3.666666	//Numeros reais, maior precisão do que floats
+	double my_double = 3.666666;	//Numeros reais, maior precisão do que floats
 	char my_char = 'a';		//Caracteres
 	
 	//Apenas disponivel com C23, mas existe no header stdbool.h
