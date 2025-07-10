@@ -4,3 +4,6 @@ c/build
 **/CMakeCache.txt
 **/cmake_install.cmake
 **/Makefile
+**/_deps
+**/CPackConfig.cmake
+/**/CPackSourceConfig.cmake

@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 4.0)
+
 project(basics)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/basics)
+
 add_executable(01_basic_storage_types_and_words 01_basic_storage_types_and_words.c)
+add_executable(02_expressions_and_operators 02_expressions_and_operators.c)
+add_executable(03_control_flow 03_control_flow.c)
+add_executable(04_functions_and_scope 04_functions_and_scope.c)
+add_executable(05_pointers_arrays_and_dynamic_memory 05_pointers_arrays_and_dynamic_memory.c)
