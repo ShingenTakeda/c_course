@@ -27,3 +27,4 @@ endif()
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 add_subdirectory(basics)
+add_subdirectory(graphical_explanations_and_real_use_cases)

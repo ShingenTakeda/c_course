@@ -1,9 +1,34 @@
-message("The PATH environment variable is: $ENV{PATH}")
+#Make tool that get the path to zig to be put where it is needed
 
-set(CMAKE_C_COMPILER zig cc)
-set(CMAKE_CXX_COMPILER zig c++)
+#C compiler
+set(CMAKE_C_COMPILER zig)
+set(CMAKE_C_COMPILER_ARG1 cc)
+
+#C++ compiler
+set(CMAKE_CXX_COMPILER zig)
+set(CMAKE_CXX_COMPILER_ARG1 c++)
+
+
+if(CMAKE_HOST_WIN32)
+    set(SCRIPT_SUFFIX ".cmd")
+else()
+    set(SCRIPT_SUFFIX ".sh")
+endif()
+
+#Ar
+set(CMAKE_AR ${CMAKE_CURRENT_LIST_DIR}/toolchain/zig_ar${SCRIPT_SUFFIX} CACHE FILEPATH "Zig AR")
+set(CMAKE_DLLTOOL ${CMAKE_CURRENT_LIST_DIR}/toolchain/zig_dlltool${SCRIPT_SUFFIX} CACHE FILEPATH "Zig DLLTOOL")
+set(CMAKE_RANLIB ${CMAKE_CURRENT_LIST_DIR}/toolchain/zig_ranlib${SCRIPT_SUFFIX} CACHE FILEPATH "Zig RANLIB")
+set(CMAKE_RC ${CMAKE_CURRENT_LIST_DIR}/toolchain/zig_rc${SCRIPT_SUFFIX} CACHE FILEPATH "Zig RC")
+
 set(CMAKE_C_COMPILER_TARGET ${TARGET})
 set(CMAKE_CXX_COMPILER_TARGET ${TARGET})
+
+set(CMAKE_C_STANDARD_COMPUTED_DEFAULT 11)
+
+# Optional: remove LTO or other flags CMake might try
+set(CMAKE_C_FLAGS_INIT "")
+set(CMAKE_CXX_FLAGS_INIT "")
 
 if (CMAKE_HOST_UNIX)
 	set(CMAKE_C_LINKER_DEPFILE_SUPPORTED FALSE)
