@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 4.0)
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/zig_toolchain.cmake")
 
-project(c)
+project(c_classes LANGUAGES C)
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

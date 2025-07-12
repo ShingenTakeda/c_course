@@ -12,13 +12,25 @@ if(NOT ZIG_EXE_RESULT EQUAL 0)
     message(FATAL_ERROR "Failed to get zig executable path")
 endif()
 
+# Use TARGET variable if provided, otherwise default to native
+if(DEFINED TARGET)
+    set(ZIG_TARGET ${TARGET})
+else()
+    # Default to native if no target specified
+    set(ZIG_TARGET "native")
+endif()
+
 #C compiler
 set(CMAKE_C_COMPILER ${ZIG_EXE})
 set(CMAKE_C_COMPILER_ARG1 cc)
+set(CMAKE_C_COMPILER_ARG2 -target)
+set(CMAKE_C_COMPILER_ARG3 ${ZIG_TARGET})
 
 #C++ compiler
 set(CMAKE_CXX_COMPILER ${ZIG_EXE})
 set(CMAKE_CXX_COMPILER_ARG1 c++)
+set(CMAKE_CXX_COMPILER_ARG2 -target)
+set(CMAKE_CXX_COMPILER_ARG3 ${ZIG_TARGET})
 
 
 if(CMAKE_HOST_WIN32)
