@@ -6,4 +6,5 @@ c/build
 **/Makefile
 **/_deps
 **/CPackConfig.cmake
-/**/CPackSourceConfig.cmake
+**/CPackSourceConfig.cmake
+**/.cache
