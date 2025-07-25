@@ -8,6 +8,32 @@ project(c_classes LANGUAGES C)
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Include Zig libc headers for language server support
+# These are set by the toolchain file, but we can also set them here for clarity
+if(DEFINED ZIG_STD_DIR)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        include_directories(SYSTEM 
+            ${ZIG_STD_DIR}/libc/include
+            ${ZIG_STD_DIR}/libc/include/generic-musl
+            ${ZIG_STD_DIR}/libc/include/x86_64-linux-musl
+        )
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        include_directories(SYSTEM 
+            ${ZIG_STD_DIR}/libc/include
+            ${ZIG_STD_DIR}/libc/include/any-windows-any
+            ${ZIG_STD_DIR}/libc/include/x86_64-windows-gnu
+        )
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        include_directories(SYSTEM 
+            ${ZIG_STD_DIR}/libc/include
+            ${ZIG_STD_DIR}/libc/include/any-darwin-any
+            ${ZIG_STD_DIR}/libc/include/x86_64-macos
+        )
+    else()
+        include_directories(SYSTEM ${ZIG_STD_DIR}/libc/include)
+    endif()
+endif()
+
 # Dependencies
 set(RAYLIB_VERSION 5.5)
 find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED

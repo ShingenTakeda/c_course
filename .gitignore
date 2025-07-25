@@ -1,4 +1,4 @@
-c/build
+**/build
 **/CMakeFiles
 **/compile_commands.json
 **/CMakeCache.txt
@@ -8,3 +8,4 @@ c/build
 **/CPackConfig.cmake
 **/CPackSourceConfig.cmake
 **/.cache
+**/.vscode
