@@ -1,15 +1,29 @@
 #Make tool that get the path to zig to be put where it is needed
 
-# Get zig executable path using bootstrap script
+# Get zig executable path and stdlib directory using bootstrap script
 execute_process(
     COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/bootstrap.py
-    OUTPUT_VARIABLE ZIG_EXE
+    OUTPUT_VARIABLE ZIG_BOOTSTRAP_OUTPUT
     OUTPUT_STRIP_TRAILING_WHITESPACE
-    RESULT_VARIABLE ZIG_EXE_RESULT
+    RESULT_VARIABLE ZIG_BOOTSTRAP_RESULT
 )
 
-if(NOT ZIG_EXE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed to get zig executable path")
+if(NOT ZIG_BOOTSTRAP_RESULT EQUAL 0)
+    message(FATAL_ERROR "Failed to get zig environment info")
+endif()
+
+# Parse ZIG_EXE and ZIG_STD_DIR from the output
+string(REGEX MATCH "ZIG_EXE=([^\n]+)" _zig_exe_match "${ZIG_BOOTSTRAP_OUTPUT}")
+string(REGEX REPLACE ".*ZIG_EXE=([^\n]+).*" "\\1" ZIG_EXE "${_zig_exe_match}")
+
+string(REGEX MATCH "ZIG_STD_DIR=([^\n]+)" _zig_std_dir_match "${ZIG_BOOTSTRAP_OUTPUT}")
+string(REGEX REPLACE ".*ZIG_STD_DIR=([^\n]+).*" "\\1" ZIG_STD_DIR "${_zig_std_dir_match}")
+
+if(NOT ZIG_EXE)
+    message(FATAL_ERROR "Failed to parse ZIG_EXE from bootstrap output")
+endif()
+if(NOT ZIG_STD_DIR)
+    message(FATAL_ERROR "Failed to parse ZIG_STD_DIR from bootstrap output")
 endif()
 
 # Use TARGET variable if provided, otherwise default to native
@@ -60,4 +74,30 @@ if (CMAKE_HOST_UNIX)
 	set(CMAKE_C_LINKER_DEPFILE_SUPPORTED FALSE)
 	set(CMAKE_CXX_LINKER_DEPFILE_SUPPORTED FALSE)
 endif()
+
+# Set Zig libc include directories per system
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(ZIG_LIBC_INCLUDE_DIRS
+        ${ZIG_STD_DIR}/libc/include
+        ${ZIG_STD_DIR}/libc/include/generic-musl
+        ${ZIG_STD_DIR}/libc/include/x86_64-linux-musl
+    )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ZIG_LIBC_INCLUDE_DIRS
+        ${ZIG_STD_DIR}/libc/include
+        ${ZIG_STD_DIR}/libc/include/any-windows-any
+        ${ZIG_STD_DIR}/libc/include/x86_64-windows-gnu
+    )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(ZIG_LIBC_INCLUDE_DIRS
+        ${ZIG_STD_DIR}/libc/include
+        ${ZIG_STD_DIR}/libc/include/any-darwin-any
+        ${ZIG_STD_DIR}/libc/include/x86_64-macos
+    )
+else()
+    set(ZIG_LIBC_INCLUDE_DIRS ${ZIG_STD_DIR}/libc/include)
+endif()
+
+# Add these as SYSTEM include directories for all targets
+include_directories(SYSTEM ${ZIG_LIBC_INCLUDE_DIRS})
 

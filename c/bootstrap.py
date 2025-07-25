@@ -27,6 +27,12 @@ def find_zig_executable():
             'C:\\Program Files\\zig\\zig.exe',
             os.path.expanduser('~\\zig\\zig.exe'),
         ])
+        # Recursively search in the WinGet Packages directory
+        winget_packages_dir = os.path.expandvars(r'C:\Users\%USERNAME%\AppData\Local\Microsoft\WinGet\Packages')
+        if os.path.isdir(winget_packages_dir):
+            for root, dirs, files in os.walk(winget_packages_dir):
+                if 'zig.exe' in files:
+                    possible_paths.append(os.path.join(root, 'zig.exe'))
     elif system == 'darwin':  # macOS
         possible_paths.extend([
             '/opt/homebrew/bin/zig',
@@ -52,33 +58,28 @@ def find_zig_executable():
     
     return None
 
-def get_zig_exe():
-    """Run 'zig env' and extract the zig_exe field from the JSON output."""
-    # First try to find the zig executable
+def get_zig_env():
+    """Run 'zig env' and extract the zig_exe and std_dir fields from the JSON output."""
     zig_path = find_zig_executable()
     if not zig_path:
         print("Error: Could not find zig executable", file=sys.stderr)
         return None
-    
     try:
-        # Run zig env and capture the output
         result = subprocess.run([zig_path, 'env'], 
                               capture_output=True, 
                               text=True, 
                               check=True)
-        
-        # Parse the JSON output
         env_data = json.loads(result.stdout)
-        
-        # Extract and return the zig_exe field
         zig_exe = env_data.get('zig_exe')
+        std_dir = env_data.get('std_dir')
         if zig_exe:
-            print(zig_exe)
-            return zig_exe
-        else:
-            print("Error: 'zig_exe' field not found in zig env output", file=sys.stderr)
+            print(f"ZIG_EXE={zig_exe}")
+        if std_dir:
+            print(f"ZIG_STD_DIR={std_dir}")
+        if not zig_exe or not std_dir:
+            print("Error: Missing fields in zig env output", file=sys.stderr)
             return None
-            
+        return zig_exe, std_dir
     except subprocess.CalledProcessError as e:
         print(f"Error running '{zig_path} env': {e}", file=sys.stderr)
         return None
@@ -90,4 +91,4 @@ def get_zig_exe():
         return None
 
 if __name__ == "__main__":
-    get_zig_exe()
+    get_zig_env()
