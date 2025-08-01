@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
 
-
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/zig_toolchain.cmake")
 
 project(c_classes LANGUAGES C)
@@ -53,4 +52,5 @@ endif()
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 add_subdirectory(basics)
+add_subdirectory(data_structures)
 add_subdirectory(graphical_explanations_and_real_use_cases)
