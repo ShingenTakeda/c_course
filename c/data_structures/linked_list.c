@@ -13,7 +13,7 @@ typedef struct
 {
 	Nodo_t *cabeca;
 	Nodo_t *cauda;
-	size_t tamanho;
+	long int tamanho;
 }Lista_Encadeada_t;
 
 Lista_Encadeada_t *le_init()
@@ -24,7 +24,7 @@ Lista_Encadeada_t *le_init()
 	{
 		ptr->cabeca = NULL;
 		ptr->cauda = NULL;
-		ptr->tamanho = 0;
+		ptr->tamanho = -1;
 	}
 
 	return ptr;
@@ -36,13 +36,14 @@ Nodo_t *le_inserir(Lista_Encadeada_t *lista, int val)
 	n_ptr->val = val;
 	n_ptr->prox = NULL;
 
-	if(lista->tamanho == 0 && n_ptr != NULL)
+	if(lista->tamanho < 0 && n_ptr != NULL)
 	{
 		lista->cabeca = n_ptr;
 		lista->cauda = n_ptr;
 		lista->tamanho++;
 	}
-	if(lista->tamanho > 0 && n_ptr != NULL)
+
+	if(lista->tamanho >= 0 && n_ptr != NULL)
 	{
 		lista->cauda->prox = n_ptr;
 		lista->cauda = n_ptr;
@@ -54,7 +55,7 @@ Nodo_t *le_inserir(Lista_Encadeada_t *lista, int val)
 
 Nodo_t *le_inserir_em_indice(Lista_Encadeada_t *lista, int indice, int val)
 {
-	if(indice > lista->tamanho)
+	if(indice >= lista->tamanho)
 	{
 		return NULL;
 	}
@@ -82,23 +83,19 @@ Nodo_t *le_inserir_em_indice(Lista_Encadeada_t *lista, int indice, int val)
 	return n_ptr;
 }
 
-void le_remover_elemento(Lista_Encadeada_t *lista, int indice)
+int le_get(Lista_Encadeada_t *lista, unsigned int indice)
 {
 	if(indice >= lista->tamanho)
 	{
-		return;
+		return 0;
 	}
 
 	Nodo_t *temp_ptr = lista->cabeca;
-	for(int i = -1; i < indice; i++)
+	for(int i = 0; i < indice; i++)
 	{
 		temp_ptr = temp_ptr->prox;
 	}
-}
-
-int le_get(int indice)
-{
-	return 0;
+	return temp_ptr->val;
 }
 
 void le_print(Lista_Encadeada_t *lista)
@@ -115,9 +112,54 @@ void le_print(Lista_Encadeada_t *lista)
 	}
 }
 
-Nodo_t *le_nodo_get(int indice)
+Nodo_t *le_nodo_get(Lista_Encadeada_t *lista, unsigned long int indice)
 {
-	return NULL;
+	if(indice >= lista->tamanho)
+	{
+		return NULL;
+	}
+
+	Nodo_t *temp_ptr = lista->cabeca;
+	for(int i = 0; i < indice; i++)
+	{
+		temp_ptr = temp_ptr->prox;
+	}
+	return temp_ptr;
+}
+
+void le_remover_elemento(Lista_Encadeada_t *lista, unsigned long int indice)
+{
+	if(indice >= lista->tamanho)
+	{
+		return;
+	}
+
+	Nodo_t *temp_ptr_1 = lista->cabeca;
+	Nodo_t *temp_ptr_2 = NULL;
+
+	if(indice == 0)
+	{
+		lista->cabeca = lista->cabeca->prox;
+		free(temp_ptr_1);
+		lista->tamanho--;
+		return;
+	}
+
+	if(indice == lista->tamanho - 1)
+	{
+		temp_ptr_1 = lista->cauda;
+		lista->cauda = le_nodo_get(lista, indice - 1);
+		free(temp_ptr_1);
+		lista->tamanho--;
+		return;
+	}
+
+	temp_ptr_1 = le_nodo_get(lista, indice);
+	temp_ptr_2 = le_nodo_get(lista, indice - 1);
+
+	temp_ptr_2->prox = temp_ptr_1->prox;
+	free(temp_ptr_1);
+	lista->tamanho--;
 }
 
 int main()
@@ -130,7 +172,18 @@ int main()
 	}
 
 	le_print(lista);
-	printf("{tamanho: %lu, cabeca->val: %i, cauda->val: %i}\n", lista->tamanho, lista->cabeca->val, lista->cauda->val);
+	printf("{tamanho: %li, cabeca->val: %i, cauda->val: %i}\n", lista->tamanho, lista->cabeca->val, lista->cauda->val);
 	
+	le_remover_elemento(lista, 0);
+	le_print(lista);
+	printf("{tamanho: %li, cabeca->val: %i, cauda->val: %i}\n", lista->tamanho, lista->cabeca->val, lista->cauda->val);
+
+	le_remover_elemento(lista, lista->tamanho - 1);
+	le_print(lista);
+	printf("{tamanho: %li, cabeca->val: %i, cauda->val: %i}\n", lista->tamanho, lista->cabeca->val, lista->cauda->val);
+
+	le_remover_elemento(lista, 1);
+	printf("lista[1] = %i\n", le_get(lista, 1));
+
 	return 0;
 }
