@@ -1,11 +1,6 @@
 #include "vector.h"
 #include <string.h>
 
-// Constantes
-#define GROWTH_RATE 2
-#define VECTOR_DEFAULT_SIZE 10
-
-
 Vector_t *vector_init(size_t tam_dado, vector_insert func_inserir, data_free func_free)
 {
   	Vector_t *vec = (Vector_t *)malloc(sizeof(Vector_t));
@@ -41,18 +36,18 @@ Vector_t *vector_init(size_t tam_dado, vector_insert func_inserir, data_free fun
 
 void vector_inserir(Vector_t *vector, void *dado) 
 {
+	if (vector->tamanho++ >= (vector->capacidade / vector->tamanho_elemento) / 2)
+	{
+		vector->dados = realloc(vector->dados, vector->tamanho_elemento * (vector->tamanho * GROWTH_RATE));
+   		vector->capacidade =vector->tamanho_elemento * (vector->tamanho * GROWTH_RATE);
+  	}
+
 	memcpy(&vector->dados[vector->tamanho_elemento * vector->tamanho], dado, vector->tamanho_elemento);
 
 	if(vector->func_inserir != NULL)
 	{
 		vector->func_inserir(vector, dado);
 	}
-
-	if (vector->tamanho++ >= (vector->capacidade / vector->tamanho_elemento) / 2)
-	{
-		vector->dados = realloc(vector->dados, vector->tamanho_elemento * (vector->tamanho * GROWTH_RATE));
-   		vector->capacidade =vector->tamanho_elemento * (vector->tamanho * GROWTH_RATE);
-  	}
 }
 
 void *vector_indice(Vector_t *vector, size_t indice)

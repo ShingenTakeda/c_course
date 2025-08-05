@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "hash_table_helpers.c"
 
-int main
+int main()
 {
 	return 0;
 }
