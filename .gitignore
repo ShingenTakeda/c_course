@@ -8,3 +8,15 @@
 **/CPackConfig.cmake
 **/CPackSourceConfig.cmake
 **/.cache
+
+#linux generated libs
+**/*.so
+**/*.a
+
+#windows generated libs
+**/*.dll
+**/*.lib
+
+#mac generated libs
+**/*.dylib
+**/*.a

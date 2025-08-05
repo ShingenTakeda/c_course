@@ -60,6 +60,21 @@ void *vector_indice(Vector_t *vector, size_t indice)
   return NULL;
 }
 
+//TODO: Need to free deep allocated memory here
+void vector_remover_em_indice(Vector_t *vector, size_t indice)
+{
+	if(indice > vector->tamanho)
+	{
+		return;
+	}
+
+	int bytes_to_copy = vector->tamanho - indice;
+	uint8_t *v_ptr = (uint8_t *)vector_indice(vector, indice);
+	memcpy(v_ptr, &vector->dados[vector->tamanho_elemento * (indice + 1)], (bytes_to_copy * vector->tamanho_elemento));
+
+	vector->tamanho--;
+}
+
 void vector_free(Vector_t *vector) 
 {
 	if(vector->func_free != NULL)

@@ -54,6 +54,20 @@ void *vector_indice(Vector_t *vector, size_t indice)
 	return NULL;
 }
 
+void vector_remover_em_indice(Vector_t *vector, size_t indice)
+{
+	if(indice > vector->tamanho)
+	{
+		return;
+	}
+
+	int bytes_to_copy = vector->tamanho - indice;
+	uint8_t *v_ptr = (uint8_t *)vector_indice(vector, indice);
+	memcpy(v_ptr, &vector->dados[vector->tamanho_elemento * (indice + 1)], (bytes_to_copy * vector->tamanho_elemento));
+
+	vector->tamanho--;
+}
+
 //Limpeza generica, não cobre todos os casos
 void vector_free(Vector_t *vector)
 {
@@ -106,7 +120,15 @@ int main()
 	
 	padding_ruim *temp_ptr = NULL;
 
-	for(int i = 0; i < 256; i++)
+	for(int i = 0; i < vec_bp->tamanho; i++)
+	{
+		temp_ptr = (padding_ruim*)vector_indice(vec_bp, i);
+		printf("{a = %#2X, b = %i, int c = %#2X}\n", temp_ptr->a, temp_ptr->b, temp_ptr->c);
+	}
+
+	vector_remover_em_indice(vec_bp, vec_bp->tamanho - 10);
+
+	for(int i = 0; i < vec_bp->tamanho; i++)
 	{
 		temp_ptr = (padding_ruim*)vector_indice(vec_bp, i);
 		printf("{a = %#2X, b = %i, int c = %#2X}\n", temp_ptr->a, temp_ptr->b, temp_ptr->c);
@@ -115,7 +137,7 @@ int main()
 	printf("vec_pb->tamanho: %lu\n", vec_bp->tamanho);
 	printf("vec_pb->capacidade: %lu bytes\n", vec_bp->capacidade);
 	printf("vec_pb->tamanho_elemento: %lu bytes\n", vec_bp->tamanho_elemento);
-	printf("capacidade de vec_pb por razao de paddings_ruins: %lu\n", vec_bp->capacidade / vec_bp->tamanho_elemento);
+	printf("capacidade de vec_pb por razao de paddings_ruim: %lu\n", vec_bp->capacidade / vec_bp->tamanho_elemento);
 
 
 	return 0;
